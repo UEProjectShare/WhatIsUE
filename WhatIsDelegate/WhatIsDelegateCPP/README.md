@@ -17,6 +17,11 @@ struct FTest
 		return a;
 	}
 
+	void TestObj(int a)
+	{
+		cout << "FTest.TestObj()：" << a << endl;
+	}
+
 	static int TestStatic(int a)
 	{
 		cout << "FTest:TestStatic()" << endl;
@@ -26,8 +31,11 @@ struct FTest
 
 int main()
 {
+	FTest TestStruct;
+
 	//单播1
 	SIMPLE_SINGLE_DELEGATE(Simple1, void, int);
+	//绑定函数
 	Simple1.Bind([](int a)
 	{
 		cout << "SIMPLE_SINGLE_DELEGATE" << endl;
@@ -36,13 +44,26 @@ int main()
 
 	Simple1.ReleaseDelegate();
 
+	//绑定对象
+	Simple1.Bind(&TestStruct, &FTest::TestObj);
+	Simple1.Execute(1);
+
+	Simple1.ReleaseDelegate();
+
 	//单播2
 	SIMPLETEST Simple2;
+	//绑定函数
 	Simple2.Bind([](int a)
 	{
 		cout << "SIMPLE_SINGLE_DELEGATE" << endl;
 	});
 	Simple2.Execute(1);
+
+	Simple2.ReleaseDelegate();
+
+	//绑定对象
+	Simple2.Bind(&TestStruct, &FTest::TestObj);
+	Simple2.Execute(2);
 
 	Simple2.ReleaseDelegate();
 
@@ -58,7 +79,6 @@ int main()
 
 	Multicast1.AddFunction(FTest::TestStatic);
 
-	FTest TestStruct;
 	Multicast1.AddFunction(&TestStruct, &FTest::Test);
 
 	Multicast1.Broadcast(100);
