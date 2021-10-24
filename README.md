@@ -7,3 +7,4 @@
 | WhatIsSharedPtr | C++实现一个UE风格的简单的智能指针 |
 | WhatIsThread/SmartThreadLite | C++实现一个UE风格的多线程（RunnableThread，TaskRunnable），仍需要完善 |
 | WhatIsJSON | UEJSON食用方法 |
+| WhatIsXML | UEXML食用方法 |
