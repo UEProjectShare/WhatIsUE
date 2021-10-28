@@ -1,0 +1,24 @@
+{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "1.0",
+  "FriendlyName": "SimpleHTTP",
+  "Description": "This plugin provides the ability to upload, download, and delete as version 1.0. In fact, this plug-in is not completed and we will complete it in the hot update course.",
+  "Category": "RenZhai",
+  "CreatedBy": "Other Courses",
+  "CreatedByURL": "",
+  "DocsURL": "",
+  "MarketplaceURL": "",
+  "SupportURL": "",
+  "EngineVersion": "4.26",
+  "CanContainContent": true,
+  "IsBetaVersion": false,
+  "Installed": true,
+  "Modules": [
+	{
+		"Name": "SmartHTTP",
+		"Type": "Runtime",
+		"LoadingPhase": "Default"
+	}
+  ]
+}
