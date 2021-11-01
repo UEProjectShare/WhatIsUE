@@ -3,30 +3,6 @@
 
 #define LOCTEXT_NAMESPACE "SOutputLog"
 
-FLogViewerOutputDevice::FLogViewerOutputDevice(const TArray<TSharedPtr<FLogMessage>>& Messages)
-	: FOutputDevice()
-{
-	FCoreDelegates::OnHandleSystemError.AddRaw(this, &FLogViewerOutputDevice::OnCrash);
-	GLog->AddOutputDevice(this);
-}
-
-FLogViewerOutputDevice::~FLogViewerOutputDevice()
-{
-	if (GLog != nullptr)
-	{
-		GLog->RemoveOutputDevice(this);
-	}
-	FCoreDelegates::OnHandleSystemError.RemoveAll(this);
-}
-
-void FLogViewerOutputDevice::OnCrash()
-{
-	if (GLog != nullptr)
-	{
-		GLog->RemoveOutputDevice(this);
-	}
-}
-
 bool FLogViewerOutputDevice::CreateLogMessages( const TCHAR* V, ELogVerbosity::Type Verbosity, const class FName& Category, TArray< TSharedPtr<FLogMessage> >& OutMessages )
 {
 if (Verbosity == ELogVerbosity::SetColor)
@@ -110,12 +86,6 @@ if (Verbosity == ELogVerbosity::SetColor)
 
 	return OldNumMessages != OutMessages.Num();
 }
-
-void FLogViewerOutputDevice::Serialize(const TCHAR* V, ELogVerbosity::Type Verbosity, const class FName& Category)
-{
-	OnLogMessageReceivedDelegate.ExecuteIfBound(V, Verbosity, Category );
-}
-
 
 #undef LOCTEXT_NAMESPACE
 

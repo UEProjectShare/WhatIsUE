@@ -13,15 +13,8 @@
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void SLogViewerWidgetMain::Construct( const FArguments& InArgs )
 {
-	LogDevice = MakeShareable(new FLogViewerOutputDevice(InArgs._Messages));
-
 	CategoryMenu = SNew(SLogViewerWidgetCategoriesView)
 		.MainWidget(this);
-	
-	for (const auto& Message : InArgs._Messages)
-	{
-		CategoryMenu->AddCategory(Message->Category);
-	}
 
 	MessagesTextMarshaller = FOutputLogTextLayoutMarshaller::Create(InArgs._Messages, &CategoryMenu->Filter);
 
@@ -39,8 +32,6 @@ void SLogViewerWidgetMain::Construct( const FArguments& InArgs )
 		.CategoryMenu(CategoryMenu.Get());
 	//.OnVScrollBarUserScrolled(this, &SLogViewerWidgetMain::OnUserScrolled);
 	//.ContextMenuExtender(this, &SLogViewerWidgetMain::ExtendTextBoxMenu);
-
-	auto a = FFeatureStyle::Get().GetBrush("ToolPanel.GroupBorder");
 
 	ChildSlot
 	[
@@ -87,7 +78,6 @@ void SLogViewerWidgetMain::Construct( const FArguments& InArgs )
 			]
 		]
 	];
-	BeginListenEngine();
 }
 
 SLogViewerWidgetMain::~SLogViewerWidgetMain()
@@ -96,11 +86,6 @@ SLogViewerWidgetMain::~SLogViewerWidgetMain()
 }
 
 END_SLATE_FUNCTION_BUILD_OPTIMIZATION
-
-void SLogViewerWidgetMain::BeginListenEngine()
-{
-	
-}
 
 void SLogViewerWidgetMain::HandleNewLogMessageReceived(const TCHAR* V, ELogVerbosity::Type Verbosity, const class FName& Category)
 {

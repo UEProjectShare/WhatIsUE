@@ -18,7 +18,7 @@
 
 IMPLEMENT_APPLICATION(SmartLogViewer, "SmartLogViewer");
 
-#define LOCTEXT_NAMESPACE "SLogViewerWidgetMain"
+#define LOCTEXT_NAMESPACE "SSmartLogViewerWidget"
 
 TSharedPtr<class FTabManager> SmartLogViewerTabManager;
 TSharedPtr<FTabManager::FLayout> TabManagerLayout;
@@ -103,8 +103,7 @@ void RegisterDefaultLogViewerTab(FTabManager& InTabManager)
 {
 	const auto SpawnDefaultLogViewerTab = [](const FSpawnTabArgs& Args)
 	{
-		OutputLogHistory = MakeShareable(new FOutputLogHistory);
-		TSharedRef<SLogViewerWidgetMain> Widget = SNew(SLogViewerWidgetMain).Messages(OutputLogHistory->GetMessages());
+		TSharedRef<SLogViewerWidgetMain> Widget = SNew(SLogViewerWidgetMain);
 		TSharedRef<SDockTab> Tab = SNew(SDockTab)
 			.TabRole(ETabRole::DocumentTab)
 			.Label(NSLOCTEXT("LogViewer", "EngineOutputTabTitle", "LogDock"))

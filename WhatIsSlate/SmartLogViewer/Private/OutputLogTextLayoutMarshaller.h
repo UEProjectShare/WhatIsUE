@@ -37,8 +37,7 @@ public:
 protected:
 
 	FOutputLogTextLayoutMarshaller(TArray< TSharedPtr<FLogMessage> > InMessages, FLogFilter* InFilter);
-
-	void AppendMessageToTextLayout(const TSharedPtr<FLogMessage>& InMessage);
+	
 	void AppendMessagesToTextLayout(const TArray<TSharedPtr<FLogMessage>>& InMessages);
 
 	/** All log messages to show in the text box */

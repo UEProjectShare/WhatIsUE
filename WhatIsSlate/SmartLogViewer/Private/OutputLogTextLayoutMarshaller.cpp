@@ -21,7 +21,7 @@ TSharedRef< FOutputLogTextLayoutMarshaller > FOutputLogTextLayoutMarshaller::Cre
 
 FOutputLogTextLayoutMarshaller::~FOutputLogTextLayoutMarshaller()
 {
-	;
+	
 }
 
 void FOutputLogTextLayoutMarshaller::SetText(const FString& SourceString, FTextLayout& TargetTextLayout)
@@ -65,29 +65,6 @@ bool FOutputLogTextLayoutMarshaller::AppendMessage(const TCHAR* InText, const EL
 	}
 
 	return true;
-}
-
-void FOutputLogTextLayoutMarshaller::AppendMessageToTextLayout(const TSharedPtr<FLogMessage>& InMessage)
-{
-	if (!Filter->IsMessageAllowed(InMessage))
-	{
-		return;
-	}
-
-	// Increment the cached count if we're not rebuilding the log
-	if (!IsDirty())
-	{
-		CachedNumMessages++;
-	}
-
-	const FTextBlockStyle& MessageTextStyle = FFeatureStyle::Get().GetWidgetStyle<FTextBlockStyle>(InMessage->Style);
-
-	TSharedRef<FString> LineText = InMessage->Message;
-
-	TArray<TSharedRef<IRun>> Runs;
-	Runs.Add(FSlateTextRun::Create(FRunInfo(), LineText, MessageTextStyle));
-
-	TextLayout->AddLine(FSlateTextLayout::FNewLineData(MoveTemp(LineText), MoveTemp(Runs)));
 }
 
 void FOutputLogTextLayoutMarshaller::AppendMessagesToTextLayout(const TArray<TSharedPtr<FLogMessage>>& InMessages)

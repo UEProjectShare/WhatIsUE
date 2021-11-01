@@ -36,6 +36,3 @@ struct FLogMessage
 	{
 	}
 };
-
-DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnLogMessageReceived, const TCHAR*, ELogVerbosity::Type, const class FName& );
-typedef FOnLogMessageReceived::FDelegate FOnLogMessageReceivedDelegate;

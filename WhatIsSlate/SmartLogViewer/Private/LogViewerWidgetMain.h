@@ -27,15 +27,11 @@ public:
 
 	void Construct( const FArguments& InArgs );
 
-	void BeginListenEngine();
-
 	/** Converts the array of messages into something the text box understands */
 	TSharedPtr< FOutputLogTextLayoutMarshaller > MessagesTextMarshaller;
 	TSharedPtr< FLogViewerOutputDevice > LogDevice;
 
 	void HandleNewLogMessageReceived(const TCHAR* V, ELogVerbosity::Type Verbosity, const class FName& Category);
-
-	//void HandleNewLogMessageReceived();
 
 	/** The editable text showing all log messages */
 	TSharedPtr< SMultiLineEditableTextBox > MessagesTextBox;
