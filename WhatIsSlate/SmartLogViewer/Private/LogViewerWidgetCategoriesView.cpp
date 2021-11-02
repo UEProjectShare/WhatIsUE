@@ -337,10 +337,10 @@ void SLogViewerWidgetCategoriesEntry::Construct(const FArguments& InArgs, const 
 	bIsPressed = CategoryWidget->Filter.IsLogCategoryEnabled(InItem->CategoryName);;
 	Item = InItem;
 
-	/*const FButtonStyle& ButtonStyle = FEditorStyle::GetWidgetStyle<FButtonStyle>("PlacementBrowser.Asset");
+	const FButtonStyle& ButtonStyle = FFeatureStyle::Get().GetWidgetStyle<FButtonStyle>("PlacementBrowser.Asset");
 	NormalImage = &ButtonStyle.Normal;
 	HoverImage = &ButtonStyle.Pressed;
-	PressedImage = &ButtonStyle.Hovered;*/
+	PressedImage = &ButtonStyle.Hovered;
 
 	ChildSlot
 	[

@@ -21,7 +21,7 @@ void SLogViewerWidgetMain::Construct( const FArguments& InArgs )
 	MessagesTextBox = SNew(SMultiLineEditableTextBox)
 		.Style(FFeatureStyle::Get(), "Log.TextBox")
 		.TextStyle(FFeatureStyle::Get(), "Log.Normal")
-		.ForegroundColor(FLinearColor::Gray)
+		.ForegroundColor(FLinearColor::Blue)
 		.Marshaller(MessagesTextMarshaller)
 		.OnVScrollBarUserScrolled(this, &SLogViewerWidgetMain::OnUserScrolled)
 		.IsReadOnly(true)
@@ -37,7 +37,7 @@ void SLogViewerWidgetMain::Construct( const FArguments& InArgs )
 	[
 		SNew(SBorder)
 		.Padding(3)
-		.BorderImage(FFeatureStyle::Get().GetBrush("ToolPanel.GroupBorder"))
+		//.BorderImage(FFeatureStyle::Get().GetBrush("ToolPanel.GroupBorder"))
 		[
 			SNew(SVerticalBox)
 
