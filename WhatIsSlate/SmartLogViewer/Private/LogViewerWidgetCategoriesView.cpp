@@ -3,7 +3,7 @@
 #include "LogViewerWidgetMain.h"
 #include "SlateOptMacros.h"
 #include "Widgets/Input/SSearchBox.h"
-#include "SmartLogViewer.h"
+#include "SmartLogViewerStyle.h"
 
 #define LOCTEXT_NAMESPACE "SLogViewerWidgetMain"
 

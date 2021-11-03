@@ -128,6 +128,83 @@ void SLogViewerWidgetTopBar::OnFollowLogPressed(ECheckBoxState CheckState)
 	}
 }
 
+void SLogViewerWidgetTopBar::AnalysisFile(FString FilePath)
+{
+	if (FPaths::IsRelative(FilePath))
+	{
+		FilePath = FPaths::ConvertRelativePathToFull(FilePath);
+	}
+	LastSelectedLogsPath = FilePath;
+
+	MainWidget->Cleanup();
+
+	if (!FPaths::FileExists(FilePath))
+	{
+		return;
+	}
+
+	TArray<FString> LogStrings;
+	if (!FFileHelper::LoadANSITextFileToStrings(*FilePath, nullptr, LogStrings) == true)
+		//if (!FFileHelper::LoadFileToStringArray(LogStrings, *FilePath) == true)
+	{
+		return;
+	}
+
+	if (LogStrings.Num() == 0)
+	{
+		return;
+	}
+
+	//@HACK - there might be leftovers of UTF-8 signature in the first line. Remove if exist
+	LogStrings[0].RemoveFromStart(TEXT("???"));
+
+	// Parse each line from config
+	bParsingLineWithTime = false;
+	FString AccumulatorString;
+	for (auto& LogString : LogStrings)
+	{
+		LogString.TrimStartAndEndInline();
+		if (!IsLogLineWithTime(LogString) && !bParsingLineWithTime)
+		{
+			if (HasCategory(LogString))
+			{
+				const FParsedLogLine LogLine = ParseSimpleLogLine(LogString);
+				MainWidget->HandleNewLogMessageReceived(*LogLine.LogMessage, LogLine.VerbosityLevel, FName(*LogLine.LogCategory));
+			}
+			else
+			{
+				const FParsedLogLine LogLine(LogString);
+				MainWidget->HandleNewLogMessageReceived(*LogLine.LogMessage, LogLine.VerbosityLevel, FName(*LogLine.LogCategory));
+			}
+			continue;
+		}
+		else if (!IsLogLineWithTime(LogString) && bParsingLineWithTime)
+		{
+			AccumulatorString = AccumulatorString + TEXT(" | ") + LogString;
+			continue;
+		}
+		else
+		{
+			bParsingLineWithTime = true; //After that point, new lines are just parts of previous log message
+			FParsedLogLine LogLine = ParseLogLineWithTime(LogString);
+			if (!AccumulatorString.IsEmpty())
+			{
+				LogLine.LogMessage.Append(AccumulatorString);
+				AccumulatorString.Reset();
+			}
+			MainWidget->HandleNewLogMessageReceived(*LogLine.LogMessage, LogLine.VerbosityLevel, FName(*LogLine.LogCategory));
+			continue;
+		}
+	}
+	if (MainWidget->GetParentTab().IsValid())
+	{
+		MainWidget->GetParentTab().Pin()->SetLabel(FText::FromString(FPaths::GetBaseFilename(FilePath)));
+	}
+
+	//MainWidget->LogDevice->UnsibscribeOnMessageReceived();
+	CategoryMenu->ExecuteCategoriesEnableAll(ECheckBoxState::Checked);
+}
+
 void SLogViewerWidgetTopBar::OpenLog()
 {
 	OnOpenFilePressed(ECheckBoxState::Checked);
@@ -182,79 +259,7 @@ void SLogViewerWidgetTopBar::OnOpenFilePressed(ECheckBoxState CheckState)
 		//HandleProjectViewSelectionChanged(NULL, ESelectInfo::Direct, FText());
 	}
 	FString Path = OpenFilenames[0];
-	if (FPaths::IsRelative(Path))
-	{
-		Path = FPaths::ConvertRelativePathToFull(Path);
-	}
-	LastSelectedLogsPath = Path;
-
-	MainWidget->Cleanup();
-
-	if (!FPaths::FileExists(Path))
-	{
-		return;
-	}
-
-	TArray<FString> LogStrings;
-	if (!FFileHelper::LoadANSITextFileToStrings(*Path, nullptr, LogStrings) == true)
-	//if (!FFileHelper::LoadFileToStringArray(LogStrings, *Path) == true)
-	{
-		return;
-	}
-
-	if (LogStrings.Num() == 0)
-	{
-		return;
-	}
-	
-	//@HACK - there might be leftovers of UTF-8 signature in the first line. Remove if exist
-	LogStrings[0].RemoveFromStart(TEXT("???"));
-
-	// Parse each line from config
-	bParsingLineWithTime = false;
-	FString AccumulatorString;
-	for (auto& LogString : LogStrings)
-	{
-		LogString.TrimStartAndEndInline();
-		if (!IsLogLineWithTime(LogString) && !bParsingLineWithTime)
-		{
-			if (HasCategory(LogString))
-			{
-				const FParsedLogLine LogLine = ParseSimpleLogLine(LogString);
-				MainWidget->HandleNewLogMessageReceived(*LogLine.LogMessage, LogLine.VerbosityLevel, FName(*LogLine.LogCategory));
-			}
-			else
-			{
-				const FParsedLogLine LogLine(LogString);
-				MainWidget->HandleNewLogMessageReceived(*LogLine.LogMessage, LogLine.VerbosityLevel, FName(*LogLine.LogCategory));
-			}
-			continue;
-		}
-		else if (!IsLogLineWithTime(LogString) && bParsingLineWithTime)
-		{
-			AccumulatorString = AccumulatorString + TEXT(" | ") + LogString;
-			continue;
-		}
-		else
-		{
-			bParsingLineWithTime = true; //After that point, new lines are just parts of previous log message
-			FParsedLogLine LogLine = ParseLogLineWithTime(LogString);
-			if (!AccumulatorString.IsEmpty())
-			{
-				LogLine.LogMessage.Append(AccumulatorString);
-				AccumulatorString.Reset();
-			}
-			MainWidget->HandleNewLogMessageReceived(*LogLine.LogMessage, LogLine.VerbosityLevel, FName(*LogLine.LogCategory));
-			continue;
-		}
-	}
-	if (MainWidget->GetParentTab().IsValid())
-	{
-		MainWidget->GetParentTab().Pin()->SetLabel(FText::FromString(FPaths::GetBaseFilename(Path)));
-	}
-
-	//MainWidget->LogDevice->UnsibscribeOnMessageReceived();
-	CategoryMenu->ExecuteCategoriesEnableAll( ECheckBoxState::Checked );
+	AnalysisFile(Path);
 }
 
 FParsedLogLine SLogViewerWidgetTopBar::ParseSimpleLogLine(FString& LogString)

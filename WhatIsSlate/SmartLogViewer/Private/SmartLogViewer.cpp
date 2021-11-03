@@ -1,6 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 #pragma once
-#include "SmartLogViewer.h"
+#include "SmartLogViewerStyle.h"
 #include "Core.h"
 #include "Developer/StandaloneRenderer/Public/StandaloneRenderer.h"
 #include "Slate/Public/Framework/Application/SlateApplication.h"
@@ -68,7 +68,7 @@ void OnOpenNewTabClicked(TSharedRef<SDockTab> DockTab, ETabActivationCause InAct
 	}
 }
 
-TSharedRef<SDockTab> SpawnSpecialTab()
+TSharedRef<SDockTab> SpawnSpecialTab(const FSpawnTabArgs& Args)
 {
 	const FString Link = TEXT("https://www.unrealengine.com/marketplace/en-US/product/log-viewer-pro");
 	TSharedRef<SDockTab> NewTab = SNew(SDockTab)
@@ -93,11 +93,6 @@ TSharedRef<SDockTab> SpawnSpecialTab()
 	NewTab->SetOnTabActivated(SDockTab::FOnTabActivatedCallback::CreateStatic(&OnOpenNewTabClicked));
 	return NewTab;
 }
-
-TSharedRef<SDockTab> OnSpawnTabNewDocument(const FSpawnTabArgs& Args)
-{
-	return SpawnSpecialTab();
-};
 
 void RegisterDefaultLogViewerTab(FTabManager& InTabManager)
 {
@@ -159,7 +154,7 @@ TSharedRef<SDockTab> CreateLogViewerPluginTab(const FSpawnTabArgs& SpawnTabArgs)
 	
 	if (!TabManagerLayout.IsValid())
 	{
-		SmartLogViewerTabManager->RegisterTabSpawner(TabNameOpenNewTab, FOnSpawnTab::CreateStatic(OnSpawnTabNewDocument));
+		SmartLogViewerTabManager->RegisterTabSpawner(TabNameOpenNewTab, FOnSpawnTab::CreateStatic(SpawnSpecialTab));
 		RegisterDefaultLogViewerTab(*SmartLogViewerTabManager);
 
 		TabManagerLayout = FTabManager::NewLayout("LogViewerLayout")
@@ -221,7 +216,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInInstance, _In_opt_ HINSTANCE hPrevInstance,
 
 	// 如果Cmd中没有指定opengl，则使用FSlateD3DRenderer渲染器
 	FSlateApplication::InitializeAsStandaloneApplication(GetStandardStandaloneRenderer());
-	FFeatureStyle::Get();
+	
 	InitApp();
 	
 	while(!IsEngineExitRequested())
@@ -230,6 +225,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInInstance, _In_opt_ HINSTANCE hPrevInstance,
 		FStats::AdvanceFrame(false);
 		FTicker::GetCoreTicker().Tick(FApp::GetDeltaTime());
 		FSlateApplication::Get().PumpMessages();
+		FSlateApplication::Get().CancelDragDrop();
 		FSlateApplication::Get().Tick();
 		FPlatformProcess::Sleep(0);
 	}

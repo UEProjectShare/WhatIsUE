@@ -2,7 +2,7 @@
 #include "Framework/Text/SlateTextRun.h"
 #include "LogViewerOutputDevice.h"
 #include "LogFilter.h"
-#include "SmartLogViewer.h"
+#include "SmartLogViewerStyle.h"
 
 #define LOCTEXT_NAMESPACE "SLogViewerWidgetMain"
 

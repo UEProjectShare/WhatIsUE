@@ -4,7 +4,7 @@
 #include "LogViewerWidgetCategoriesView.h"
 #include "LogViewerWidgetTopBar.h"
 #include "OutputLogTextLayoutMarshaller.h"
-#include "SmartLogViewer.h"
+#include "SmartLogViewerStyle.h"
 #include "Editor/EditorStyle/Public/EditorStyle.h"
 #include "Widgets/Input/SSearchBox.h"
 
@@ -78,6 +78,31 @@ void SLogViewerWidgetMain::Construct( const FArguments& InArgs )
 			]
 		]
 	];
+}
+
+void SLogViewerWidgetMain::OnDragEnter(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent)
+{
+	UE_LOG(LogTemp, Display, TEXT("OnDragEnter"));
+	//这里就可以按照想要的方式来获取了。
+	TSharedPtr<FExternalDragOperation> Op = DragDropEvent.GetOperationAs<FExternalDragOperation>();
+	const TArray<FString>& Files = Op->GetFiles();  //得到拖入的文件列表
+	if (Files.Num() > 0)
+	{
+		UE_LOG(LogTemp, Display, TEXT("Files:%s"), *Files[0]);
+		TopBar->AnalysisFile(*Files[0]);
+	}
+}
+
+FReply SLogViewerWidgetMain::OnDragDetected(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
+{
+	TSharedRef<FDragDropOperation> DragDropOperation = MakeShareable(new FDragDropOperation);
+	return FReply::Handled().BeginDragDrop(DragDropOperation);
+}
+
+FReply SLogViewerWidgetMain::OnDrop(const FGeometry& MyGeometry, const FDragDropEvent& DragDropEvent)
+{
+	UE_LOG(LogTemp, Display, TEXT("OnDrop"));
+	return FReply::Handled();
 }
 
 SLogViewerWidgetMain::~SLogViewerWidgetMain()

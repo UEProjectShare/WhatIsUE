@@ -31,11 +31,13 @@ public:
 	TSharedPtr< SSearchBox > FilterTextBox;
 
 	void OpenLog();
+	void AnalysisFile(FString FilePath);
 private:
 	//FSlateColorBrush brushClr;// = FSlateColorBrush(FLinearColor::White);
 	void OnClearOutputPressed(ECheckBoxState CheckState);
 	void OnOpenFilePressed(ECheckBoxState CheckState);
 	void OnFollowLogPressed(ECheckBoxState CheckState);
+	
 	FString LastSelectedLogsPath;
 	FParsedLogLine ParseSimpleLogLine(FString& LogString);
 	FParsedLogLine ParseLogLineWithTime(FString& LogString);
