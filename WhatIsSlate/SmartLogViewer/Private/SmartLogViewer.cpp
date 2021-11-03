@@ -1,5 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 #pragma once
+#include "SmartLogViewer.h"
 #include "SmartLogViewerStyle.h"
 #include "Core.h"
 #include "Developer/StandaloneRenderer/Public/StandaloneRenderer.h"
